@@ -1,37 +1,43 @@
-from dataclasses import dataclass
-from environs import Env
+import os
+
+from dotenv import load_dotenv
 
 
-@dataclass
-class TgBot:
-    token: str
+# Parse a `.env` file and load the variables inside into environment variables
+load_dotenv()
 
 
-@dataclass
-class BookBotDB:
-    host: str
-    port: str
-    database: str
-    user: str
-    password: str
+class ImproperlyConfigured(Exception):
+    """Raises when a environment variable is missing."""
+
+    def __init__(self, variable_name, *args, **kwargs):
+        self.variable_name = variable_name
+        self.message = f'Set the {variable_name} environment variable.'
+        super().__init__(self.message, *args, **kwargs)
 
 
-@dataclass
-class Config:
-    tg_bot: TgBot
-    book_bot_db: BookBotDB
+def get_env_variable(var_name: str) -> str:
+    """Get an environment variable or raise an exception.
+
+    Args:
+        var_name: a name of a environment variable.
+
+    Returns:
+        A value of the environment variable.
+
+    Raises:
+        ImproperlyConfigured: if the environment variable is not set.
+    """
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        raise ImproperlyConfigured(var_name)
 
 
-def load_config(path: str | None = None) -> Config:
-    env = Env()
-    env.read_env(path)
-    return Config(
-        tg_bot=TgBot(token=env('BOT_TOKEN')),
-        book_bot_db=BookBotDB(
-            host=env('DB_HOST'),
-            port=env('DB_PORT'),
-            database=env('DB_NAME'),
-            user=env('DB_USER'),
-            password=env('DB_PASSWORD')
-        )
-    )
+BOT_TOKEN: str = get_env_variable('BOT_TOKEN')
+
+DB_HOST: str = get_env_variable('DB_HOST')
+DB_PORT: str = get_env_variable('DB_PORT')
+DB_NAME: str = get_env_variable('DB_NAME')
+DB_USER: str = get_env_variable('DB_USER')
+DB_PASSWORD: str = get_env_variable('DB_PASSWORD')

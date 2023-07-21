@@ -1,25 +1,24 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from database.database import bot_database as db
 from lexicon.lexicon import LEXICON
 
 
-def create_bookmarks_keyboard(book_name: str, *args: int) -> InlineKeyboardMarkup:
+def create_books_keyboard(*args: str) -> InlineKeyboardMarkup:
     kb_builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
 
-    for button in sorted(set(args)):
+    for book_name in sorted(args):
         kb_builder.row(
             InlineKeyboardButton(
-                text=f'{button} - {db.book_interface.get_page_content(book_name, button)[:100]}',
-                callback_data=f'{button}#$%bookmark#$%'
+                text=book_name,
+                callback_data=f'{book_name}#$%book#$%'
             )
         )
 
     kb_builder.row(
         InlineKeyboardButton(
             text=LEXICON['edit_button'],
-            callback_data='edit_bookmarks'
+            callback_data='edit_books'
         ),
         InlineKeyboardButton(
             text=LEXICON['cancel'],
@@ -27,24 +26,27 @@ def create_bookmarks_keyboard(book_name: str, *args: int) -> InlineKeyboardMarku
         ),
         width=2
     )
+
     return kb_builder.as_markup()
 
 
-def create_edit_bookmarks_keyboard(book_name: str, *args: int) -> InlineKeyboardMarkup:
+def create_edit_books_keyboard(*args: str) -> InlineKeyboardMarkup:
     kb_builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
 
-    for button in sorted(args):
+    for book_name in sorted(args):
+        if book_name == '📖 Ray Bradbury `The Martian Chronicles`':
+            continue
         kb_builder.row(
             InlineKeyboardButton(
-                text=f'{LEXICON["del"]} {button} - {db.book_interface.get_page_content(book_name, button)[:100]}',
-                callback_data=f'{button}#$%delbookmark#$%'
+                text=f'{LEXICON["del"]} {book_name}',
+                callback_data=f'{book_name}#$%delbook#$%'
             )
         )
 
     kb_builder.row(
         InlineKeyboardButton(
             text=LEXICON['cancel'],
-            callback_data='cancel'
+            callback_data='cancel_edit_book'
         )
     )
     return kb_builder.as_markup()
