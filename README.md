@@ -40,6 +40,7 @@ pip install -r requirements.txt
 3. Заполнить файл `.env.example` и переименовать его `.env`.
 
 4. Запуск бота.
+```python bot.py```
 
 # Полезности
 
