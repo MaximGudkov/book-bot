@@ -6,9 +6,6 @@ from aiogram import Bot, Dispatcher
 from config_data.config import BOT_TOKEN
 from handlers import other_handlers, user_handlers
 from keyboards.main_menu import set_main_menu
-
-from services.file_handling import BadBookError
-
 from scripts.setup_db import setup_db
 
 logger = logging.getLogger(__name__)

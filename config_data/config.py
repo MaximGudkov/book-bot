@@ -2,7 +2,6 @@ import os
 
 from dotenv import load_dotenv
 
-
 # Parse a `.env` file and load the variables inside into environment variables
 load_dotenv()
 

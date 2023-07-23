@@ -1,6 +1,6 @@
+from database.database import bot_database as db
 from scripts.storage.add_book_query import query as add_book_query, values
 from scripts.storage.creation_query import query as create_query
-from database.database import bot_database as db
 
 
 def setup_db():

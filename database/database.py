@@ -1,11 +1,10 @@
 import json
-import os
 from dataclasses import dataclass
-
-from config_data.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 
 import psycopg2
 from psycopg2.extensions import connection
+
+from config_data.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 
 
 @dataclass
