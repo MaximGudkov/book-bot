@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from callback_factories.edit_items import EditItemsCallbackFactory
 from database.database import bot_database as db
 from lexicon.lexicon import LEXICON
 
@@ -19,7 +20,7 @@ def create_bookmarks_keyboard(book_name: str, *args: int) -> InlineKeyboardMarku
     kb_builder.row(
         InlineKeyboardButton(
             text=LEXICON['edit_button'],
-            callback_data='edit_bookmarks'
+            callback_data=EditItemsCallbackFactory(item_type='bookmarks').pack()
         ),
         InlineKeyboardButton(
             text=LEXICON['cancel'],

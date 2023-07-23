@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import Command, CommandStart, Text
 from aiogram.types import CallbackQuery, Message
 
+from callback_factories.edit_items import EditItemsCallbackFactory
 from database.database import bot_database as db
 from filters.filters import (
     IsAddToBookMarksCallbackData,
@@ -15,6 +16,7 @@ from keyboards.books_kb import create_books_keyboard, create_edit_books_keyboard
 from keyboards.pagination_kb import create_pagination_keyboard
 from lexicon.lexicon import LEXICON
 from services.file_handling import get_file_text_from_server, prepare_book, pretty_name, BadBookError
+
 
 router: Router = Router()
 
@@ -106,7 +108,7 @@ async def process_book_press(callback: CallbackQuery, user_book: str):
     )
 
 
-@router.callback_query(Text(text='edit_books'))
+@router.callback_query(EditItemsCallbackFactory.filter(F.item_type == 'books'))
 async def process_edit_books_press(callback: CallbackQuery):
     user_books = db.user_interface.get_books(callback.from_user.id)
     if len(user_books) > 1:
@@ -190,7 +192,7 @@ async def process_page_press(callback: CallbackQuery):
     await callback.answer(f'Страница {user_page} добавлена в закладки!')
 
 
-@router.callback_query(Text(text='edit_bookmarks'))
+@router.callback_query(EditItemsCallbackFactory.filter(F.item_type == 'bookmarks'))
 async def process_edit_bookmarks_press(callback: CallbackQuery):
     user_book = db.user_interface.get_current_book(callback.from_user.id)
     book_marks = db.user_interface.get_book_marks(callback.from_user.id)
