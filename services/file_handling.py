@@ -15,6 +15,8 @@ class BadBookError(Exception):
 
 
 def _get_part_text(text: str, start: int, page_size: int) -> tuple[str, int] | None:
+    # we use HTML parse mode in our bot, so we need to edit some symbols
+    text = text.replace('<', '&lt').replace('>', '&gt').replace('&', '&amp')
     end = start + page_size
     if end >= len(text):
         return text[start:], len(text) - start
