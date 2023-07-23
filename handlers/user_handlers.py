@@ -79,17 +79,19 @@ async def process_load_book(message: Message):
         book_name = message.caption or pretty_name(message.document.file_name)
         beautiful_name = '📖 ' + book_name
         if db.user_interface.book_exists(message.from_user.id, book_name):
-            await message.answer(LEXICON['book_exists'])
+            answer = LEXICON['book_exists']
         else:
             text = get_file_text_from_server(message.document.file_id)
             try:
                 content = prepare_book(text)
                 db.user_interface.save_book(message.from_user.id, beautiful_name, content)
-                await message.answer(f'Книга успешно сохранена под именем "{book_name}"')
+                answer = f'Книга успешно сохранена под именем "{book_name}"'
             except BadBookError:
-                await message.answer(LEXICON['cant_parse'])
+                answer = LEXICON['cant_parse']
     else:
-        await message.answer(LEXICON['miss_message'])
+        answer = LEXICON['miss_message']
+
+    await message.answer(answer)
 
 
 @router.callback_query(IsBookCallbackData())
@@ -108,13 +110,15 @@ async def process_book_press(callback: CallbackQuery, user_book: str):
 async def process_edit_books_press(callback: CallbackQuery):
     user_books = db.user_interface.get_books(callback.from_user.id)
     if len(user_books) > 1:
+        answer = LEXICON['edit']
         await callback.message.edit_text(
             text=LEXICON[callback.data],
             reply_markup=create_edit_books_keyboard(*user_books)
         )
-        await callback.answer(LEXICON['edit'])
     else:
-        await callback.answer(LEXICON['no_books_to_delete'])
+        answer = LEXICON['no_books_to_delete']
+
+    await callback.answer(answer)
 
 
 @router.callback_query(Text(text='cancel_edit_book'))
@@ -130,18 +134,16 @@ async def process_edit_books_press(callback: CallbackQuery):
 async def process_del_book_press(callback: CallbackQuery, user_book: str):
     db.user_interface.remove_book(callback.from_user.id, user_book)
     user_books = db.user_interface.get_books(callback.from_user.id)
+    reply_markup = create_books_keyboard(*user_books)
     if len(user_books) > 1:
-        await callback.message.edit_text(
-            text=LEXICON['edit_books'],
-            reply_markup=create_edit_books_keyboard(*user_books)
-        )
-        await callback.answer(LEXICON['deleted_book'])
+        text = LEXICON['edit_books']
+        answer = LEXICON['deleted_book']
     else:
-        await callback.message.edit_text(
-            text=LEXICON['/books'],
-            reply_markup=create_books_keyboard(*user_books)
-        )
-        await callback.answer(LEXICON['no_books_to_delete'])
+        text = LEXICON['/books']
+        answer = LEXICON['no_books_to_delete']
+
+    await callback.message.edit_text(text=text, reply_markup=reply_markup)
+    await callback.answer(answer)
 
 
 @router.callback_query(Text(text='forward'))
