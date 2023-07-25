@@ -24,7 +24,7 @@ async def main():
     # re-fill the data for the bot's lexicon. See docstring
     setup_db()
 
-    bot: Bot = Bot(token=BOT_TOKEN)
+    bot: Bot = Bot(token=BOT_TOKEN, parse_mode='HTML')
     dp: Dispatcher = Dispatcher()
 
     await set_main_menu(bot)
